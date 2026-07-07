@@ -1,0 +1,47 @@
+= Contributing to ELx
+:toc: macro
+:toclevels: 3
+:toc-title:
+:icons: font
+
+link:../README.adoc[← Back to README]
+
+How to iterate on the provisioner scripts quickly, generate a standalone
+post-install script, and customize the image (tools, packages, branding).
+
+toc::[]
+
+== Iterating on the provisioner scripts (Docker)
+
+A full VM build is slow to iterate on. To test/develop the install and configuration scripts quickly,
+use the provided container, which drops you into a shell in the scripts directory on a fresh Rocky Linux 9:
+
+[source,console]
+----
+docker build -t elx-scripts .
+docker run --rm -it elx-scripts   # clones the repo and lands you in template/scripts
+----
+
+From there you can run scripts individually. `template/scripts/_test.sh` documents a convenient run order
+for manual testing.
+
+== Generating a single post-install script
+
+If you want to apply the same provisioning outside of Packer (for example, against an existing host or a
+cloud-init `runcmd`), `bin/gen_postinstall_script.sh` concatenates all the provisioner scripts — in build
+order, stripping the redundant shebang lines — into one script printed to stdout:
+
+[source,console]
+----
+cd bin
+./gen_postinstall_script.sh > /tmp/postinstall.sh
+----
+
+== Customizing
+
+* *Add a tool* — drop a new `install_yourtool.sh` in `template/scripts/`, then add it to the `scripts`
+  list in the `provisioner "shell"` block of `template/template.pkr.hcl` (and, if you use them, to
+  `_test.sh` / `gen_postinstall_script.sh`).
+* *Change base packages* — edit the `%packages` section of `template/http/el9/ks.cfg`.
+* *Change branding / banners* — edit `motd.sh` and `issue.sh`.
+* *Change partitioning, timezone, locale, network* — edit the top of `ks.cfg`.

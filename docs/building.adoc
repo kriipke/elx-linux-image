@@ -1,0 +1,77 @@
+= Building the ELx images
+:toc: macro
+:toclevels: 3
+:toc-title:
+:icons: font
+
+link:../README.adoc[← Back to README]
+
+Everything you need to run a build: prerequisites, the `packer` invocation,
+pointing the build at a specific ISO, and targeting a different architecture or
+hypervisor.
+
+toc::[]
+
+== Requirements
+
+* *Packer* — a recent release, in your `PATH`. Download: https://www.packer.io/downloads
+* The *Parallels Packer plugin* (`github.com/hashicorp/parallels`, ≥ 1.0.3). `packer init` will fetch it.
+* *Parallels Desktop* (Pro/Business) installed on the host — the default builder targets Parallels on macOS.
+* An *Enterprise Linux ISO*. By default you don't need to download one manually: the build fetches the
+  current *Rocky Linux 10* DVD straight from the Rocky mirror (see "Pointing at your ISO" to use a local
+  or different image).
+
+== Running Packer
+
+[source,console]
+----
+# 1. Fetch the required Packer plugin (first time only)
+cd template
+packer init .
+
+# 2. (Recommended) validate the template
+packer validate -var-file=rocky10.pkrvars.hcl .
+
+# 3. Build the image
+packer build -var-file=rocky10.pkrvars.hcl .     # Rocky Linux 10 (default)
+# or
+packer build -var-file=rocky9.pkrvars.hcl .      # Rocky Linux 9
+----
+
+`packer build .` with no var-file also works and produces the same Rocky 10 image, since the defaults in
+`variables.pkr.hcl` already target Rocky 10. The finished image is written to
+`builds/<os><version>_<arch>/` (e.g. `builds/rocky10_aarch64/`).
+
+== Pointing at your ISO
+
+The ISO is chosen by two variables, set in the var-files (or overridable with `-var`):
+
+[source,hcl]
+----
+iso_url      = "https://download.rockylinux.org/pub/rocky/10/isos/aarch64/Rocky-10-latest-aarch64-dvd.iso"
+iso_checksum = "file:https://download.rockylinux.org/pub/rocky/10/isos/aarch64/CHECKSUM"
+----
+
+* `iso_url` may be an `https://` URL (downloaded and cached by Packer) or a `file:` path to a local ISO —
+  drop ISOs into the `isos/` directory to keep them with the project.
+* Using `iso_checksum = "file:<url-to-CHECKSUM>"` lets Packer read Rocky's published checksum file and
+  match it to the ISO automatically, so builds keep working across point releases without editing a hash.
+* The DVD image is used (not minimal) so the Kickstart `cdrom` install source has AppStream available.
+
+To build against a different release, override on the command line, e.g.:
+
+[source,console]
+----
+packer build -var 'os_version=10' -var 'iso_url=file:/Volumes/iso/my.iso' \
+             -var 'iso_checksum=sha256:<hash>' -var 'kickstart=el10/ks.cfg' .
+----
+
+== Building for x86_64 or another hypervisor
+
+The template is configured for aarch64 + Parallels, but the tooling is largely architecture-aware:
+
+* Set `-var 'arch=x86_64'` and `-var 'parallels_tools_flavor=lin'`, and point `iso_url` at an x86_64 ISO
+  (e.g. `.../isos/x86_64/Rocky-10-latest-x86_64-dvd.iso`).
+* Note that Parallels on Apple Silicon cannot run x86_64 guests — an x86_64 build needs an x86_64 host or
+  a different hypervisor. To target QEMU, VirtualBox, or VMware, swap the `parallels-iso` source in
+  `template.pkr.hcl` for the corresponding Packer builder and adjust the `boot_command`.

@@ -31,12 +31,34 @@ ifdef::env-github[]
 _A Packer-built, pre-hardened, batteries-included Enterprise Linux base image for building virtual machines._
 
 
-`ELx` is a heavily-modified Enterprise Linux image that is pressed using https://www.packer.io/[Packer]. This repository is responsible for applying identical bootstrapping tasks to multiple releases of Enterprise Linux, e.g. Rocky Linux to automates the creation of a
-customized, minimal, ready-to-use Enterprise Linux (RHEL / Rocky Linux 9) virtual-machine image that you can boot up and use for cli-based workflows such as system administration or as a daily-driver for Linux professionals that is configured visually and operationally uniformly as new releases of EL come out.
+`ELx` is a heavily-modified Enterprise Linux image, pressed with https://www.packer.io/[Packer], that
+applies one identical set of bootstrapping tasks across releases of Enterprise Linux (Rocky Linux 9/10).
+The result is a customized, minimal, ready-to-use VM image for CLI-based workflows — system administration
+or a Linux daily-driver — that looks and behaves the same every time, as new EL releases come out.
 
-In other words, instead of installing an OS by hand and then spending an afternoon configuring shells, editors, login banners, SSH hardening, and installing your favorite command-line tools, you run a single `packer build` and get back a reproducible VM image with all of that baked in and shipped with the same familiar custom `ELx` window manager, terminal, and cli tool suite.
+In other words: instead of installing an OS by hand and then spending an afternoon configuring shells,
+editors, login banners, and SSH hardening and installing your favorite command-line tools, you run a
+single `packer build` and get back a reproducible VM image with all of that baked in — the same familiar
+`ELx` terminal, shell, and CLI tool suite every time.
+
+[.text-center]
+*<<_whats_inside_the_image,What's inside>> · link:docs/building.adoc[Build it] · link:docs/contributing.adoc[Contribute] · link:docs/security.adoc[Security notes]*
 
 toc::[]
+
+'''
+
+*At a glance*
+
+[cols="1,3"]
+|===
+| Built with | https://www.packer.io/[Packer] + Kickstart, defined in `template/template.pkr.hcl`
+| Targets    | Rocky Linux *10* (default) and *9*; aarch64 (Apple Silicon) out of the box, x86_64 configurable
+| Builder    | Parallels (`parallels-iso`); swappable for QEMU / VirtualBox / VMware
+| Ships with | zsh + Pure prompt, tmux auto-attach, vim + polyglot, and a curated CLI tool suite (`bat`, `fd`, `fzf`, `rg`, `nnn`, `lnav`, …)
+| Hardened   | SSH locked down, authorized-use banners, self-describing `/etc/os-release`, predictable networking
+| One command | `cd template && packer init . && packer build .`
+|===
 
 
 == What's inside the image
@@ -148,120 +170,22 @@ target Enterprise Linux release, so they work on both EL9 and EL10.
 ----
 
 
-=== Building the Images
+== Documentation
 
-==== Requirements
+Step-by-step instructions live under link:docs/[`docs/`]:
 
-* *Packer* — a recent release, in your `PATH`. Download: https://www.packer.io/downloads
-* The *Parallels Packer plugin* (`github.com/hashicorp/parallels`, ≥ 1.0.3). `packer init` will fetch it.
-* *Parallels Desktop* (Pro/Business) installed on the host — the default builder targets Parallels on macOS.
-* An *Enterprise Linux ISO*. By default you don't need to download one manually: the build fetches the
-  current *Rocky Linux 10* DVD straight from the Rocky mirror (see "Pointing at your ISO" to use a local
-  or different image).
+[cols="1,3"]
+|===
+| Guide | What it covers
 
-==== Running Packer
+| link:docs/building.adoc[Building the images]  | Requirements, `packer` invocation, pointing at an ISO, and building for x86_64 or another hypervisor.
+| link:docs/contributing.adoc[Contributing]     | Fast script iteration with Docker, generating a single post-install script, and customizing the image (tools, packages, branding).
+| link:docs/security.adoc[Security notes]       | Default credentials and the hardening you should review before using the image anywhere untrusted.
+|===
 
-[source,console]
-----
-# 1. Fetch the required Packer plugin (first time only)
-cd template
-packer init .
-
-# 2. (Recommended) validate the template
-packer validate -var-file=rocky10.pkrvars.hcl .
-
-# 3. Build the image
-packer build -var-file=rocky10.pkrvars.hcl .     # Rocky Linux 10 (default)
-# or
-packer build -var-file=rocky9.pkrvars.hcl .      # Rocky Linux 9
-----
-
-`packer build .` with no var-file also works and produces the same Rocky 10 image, since the defaults in
-`variables.pkr.hcl` already target Rocky 10. The finished image is written to
-`builds/<os><version>_<arch>/` (e.g. `builds/rocky10_aarch64/`).
-
-==== Pointing at your ISO
-
-The ISO is chosen by two variables, set in the var-files (or overridable with `-var`):
-
-[source,hcl]
-----
-iso_url      = "https://download.rockylinux.org/pub/rocky/10/isos/aarch64/Rocky-10-latest-aarch64-dvd.iso"
-iso_checksum = "file:https://download.rockylinux.org/pub/rocky/10/isos/aarch64/CHECKSUM"
-----
-
-* `iso_url` may be an `https://` URL (downloaded and cached by Packer) or a `file:` path to a local ISO —
-  drop ISOs into the `isos/` directory to keep them with the project.
-* Using `iso_checksum = "file:<url-to-CHECKSUM>"` lets Packer read Rocky's published checksum file and
-  match it to the ISO automatically, so builds keep working across point releases without editing a hash.
-* The DVD image is used (not minimal) so the Kickstart `cdrom` install source has AppStream available.
-
-To build against a different release, override on the command line, e.g.:
-
-[source,console]
-----
-packer build -var 'os_version=10' -var 'iso_url=file:/Volumes/iso/my.iso' \
-             -var 'iso_checksum=sha256:<hash>' -var 'kickstart=el10/ks.cfg' .
-----
-
-==== Building for x86_64 or another hypervisor
-
-The template is configured for aarch64 + Parallels, but the tooling is largely architecture-aware:
-
-* Set `-var 'arch=x86_64'` and `-var 'parallels_tools_flavor=lin'`, and point `iso_url` at an x86_64 ISO
-  (e.g. `.../isos/x86_64/Rocky-10-latest-x86_64-dvd.iso`).
-* Note that Parallels on Apple Silicon cannot run x86_64 guests — an x86_64 build needs an x86_64 host or
-  a different hypervisor. To target QEMU, VirtualBox, or VMware, swap the `parallels-iso` source in
-  `template.pkr.hcl` for the corresponding Packer builder and adjust the `boot_command`.
-
-== Default credentials & security notes
-
-WARNING: This image is intended as a *base for further automation*, not as a production-ready hardened
-appliance. Review and change these before using it anywhere untrusted.
-
-* The build user is `ansible` / `ansible` (used by Packer over SSH).
-* The `root` password is set (encrypted) in the Kickstart file, and two SSH public keys are authorized for
-  `root`. *Replace `rootpw` and the `sshkey` lines in `ks.cfg` with your own* before building.
-* `PasswordAuthentication` is disabled — you will need one of the authorized keys (or console access) to
-  log in to the built image.
-* SELinux ships in `permissive` mode and the firewall is disabled; tighten these in the Kickstart file if
-  your environment requires it.
-
-== Contributing 
-=== Iterating on the provisioner scripts (Docker)
-
-A full VM build is slow to iterate on. To test/develop the install and configuration scripts quickly,
-use the provided container, which drops you into a shell in the scripts directory on a fresh Rocky Linux 9:
-
-[source,console]
-----
-docker build -t elx-scripts .
-docker run --rm -it elx-scripts   # clones the repo and lands you in template/scripts
-----
-
-From there you can run scripts individually. `template/scripts/_test.sh` documents a convenient run order
-for manual testing.
-
-=== Generating a single post-install script
-
-If you want to apply the same provisioning outside of Packer (for example, against an existing host or a
-cloud-init `runcmd`), `bin/gen_postinstall_script.sh` concatenates all the provisioner scripts — in build
-order, stripping the redundant shebang lines — into one script printed to stdout:
-
-[source,console]
-----
-cd bin
-./gen_postinstall_script.sh > /tmp/postinstall.sh
-----
-
-=== Customizing
-
-* *Add a tool* — drop a new `install_yourtool.sh` in `template/scripts/`, then add it to the `scripts`
-  list in the `provisioner "shell"` block of `template/template.pkr.hcl` (and, if you use them, to
-  `_test.sh` / `gen_postinstall_script.sh`).
-* *Change base packages* — edit the `%packages` section of `template/http/el9/ks.cfg`.
-* *Change branding / banners* — edit `motd.sh` and `issue.sh`.
-* *Change partitioning, timezone, locale, network* — edit the top of `ks.cfg`.
+WARNING: This image is a *base for further automation*, not a production-ready hardened appliance. The
+build ships with default credentials and authorized SSH keys — read link:docs/security.adoc[the security
+notes] and replace them before building for anything untrusted.
 
 == Changelog
 
