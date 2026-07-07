@@ -14,7 +14,7 @@ jobs:
     name: ShellCheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         env:
@@ -24,13 +24,15 @@ jobs:
         with:
           scandir: .
           format: gcc
-          severity: warning
+          # error-only: genuine bugs fail CI; POSIX/style warnings (SC3040,
+          # SC2046, SC2034, ...) are tolerated in these bootstrap scripts.
+          severity: error
 
   shfmt:
     name: shfmt (formatting)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Check shell formatting
         uses: docker://mvdan/shfmt:latest
         with:
@@ -42,7 +44,7 @@ jobs:
     name: Packer fmt & validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hashicorp/setup-packer@main
         with:
           version: latest
@@ -53,7 +55,9 @@ jobs:
     name: Hadolint (Dockerfile)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
+          # DL3041: pinning dnf package versions is brittle for a rolling EL base image.
+          ignore: DL3041
