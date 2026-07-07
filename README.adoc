@@ -1,6 +1,7 @@
 = elx — Enterprise Linux Base Image
 :toc: macro
 :toclevels: 3
+:toc-title:
 
 _A Packer-built, pre-hardened, batteries-included Enterprise Linux base image for building virtual machines._
 
