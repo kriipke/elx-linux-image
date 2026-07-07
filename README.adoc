@@ -6,27 +6,13 @@ _A Packer-built, pre-hardened, batteries-included Enterprise Linux base image fo
 
 image::screenshot.png[Screenshot with some glimpses of the workflow.]
 
+`ELx` is a heavily-modified Enterprise Linux image that is pressed using https://www.packer.io/[Packer]. This repository is responsible for applying identical bootstrapping tasks to multiple releases of Enterprise Linux, e.g. Rocky Linux to automates the creation of a
+customized, minimal, ready-to-use Enterprise Linux (RHEL / Rocky Linux 9) virtual-machine image that you can boot up and use for cli-based workflows such as system administration or as a daily-driver for Linux professionals that is configured visually and operationally uniformly as new releases of EL come out.
+
+In other words, instead of installing an OS by hand and then spending an afternoon configuring shells, editors, login banners, SSH hardening, and installing your favorite command-line tools, you run a single `packer build` and get back a reproducible VM image with all of that baked in and shipped with the same familiar custom `ELx` window manager, terminal, and cli tool suite.
+
 toc::[]
 
-== What is this?
-
-`elx` (Enterprise Linux, eXtal) is a https://www.packer.io/[Packer] project that automates the creation of a
-customized, minimal, ready-to-use Enterprise Linux (RHEL / Rocky Linux 9) virtual-machine image.
-
-Instead of installing an OS by hand and then spending an afternoon configuring shells, editors, login
-banners, SSH hardening, and installing your favorite command-line tools, you run a single `packer build`
-and get back a reproducible VM image with all of that baked in.
-
-The project does three things for you, unattended:
-
-1. *Installs the OS* from an EL9 ISO using an automated https://anaconda-installer.readthedocs.io/en/latest/kickstart.html[Kickstart] answer file (no clicking through the installer).
-2. *Provisions the image* by running a series of small, idempotent shell scripts that install and configure
-   a curated set of terminal tooling.
-3. *Minimizes the image* by removing build-time packages, old kernels, and zeroing free disk space so the
-   exported artifact is as small as possible.
-
-The result is a single, versioned, self-describing VM image you can boot, clone, or use as the golden base
-for further automation.
 
 == What's inside the image
 
