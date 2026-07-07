@@ -19,25 +19,18 @@ ifdef::env-github[]
     <!-- REPLACE THE FOLLOWING WITH YOUR REPOSITORY/PROJECT'S SHORT DESCRIPTION -->
     <h3 align="center">a highly-customized Enterprise Linux Base Image for terminal-based workflows</h3>
         <p align="center">
-      <img height=20 src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white">
-  <img height=20 src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black">
-  <img height=20 src="https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white">
+      <a href="https://github.com/kriipke/elx-linux-image/actions/workflows/ci.yml"><img height=20 src="https://img.shields.io/github/actions/workflow/status/kriipke/elx-linux-image/ci.yml?branch=main&style=for-the-badge"></a>
+  <a href="https://www.packer.io/"><img height=20 src="https://img.shields.io/badge/Packer-02A8EF?style=for-the-badge&logo=packer&logoColor=white"></a>
+  <a href="https://rockylinux.org/"><img height=20 src="https://img.shields.io/badge/Rocky%20Linux-10B981?style=for-the-badge&logo=rockylinux&logoColor=white"></a>
+  <a href="https://www.redhat.com/"><img height=20 src="https://img.shields.io/badge/Red%20Hat-EE0000?style=for-the-badge&logo=redhat&logoColor=white"></a>
+  <img height=20 src="https://img.shields.io/badge/GNU%20Bash-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white">
+  <img height=20 src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white">
 
 </p>
 <br/>
 ++++
 
-// Badges via https://github.com/Ileriayo/markdown-badges and https://shields.io/
-image:https://img.shields.io/github/actions/workflow/status/kriipke/elx-linux-image/ci.yml?branch=main&style=for-the-badge[CI,link=https://github.com/kriipke/elx-linux-image/actions/workflows/ci.yml]
-
 _A Packer-built, pre-hardened, batteries-included Enterprise Linux base image for building virtual machines._
-
-
-image:https://img.shields.io/badge/Packer-02A8EF?style=for-the-badge&logo=packer&logoColor=white[Packer,link=https://www.packer.io/]
-image:https://img.shields.io/badge/Rocky%20Linux-10B981?style=for-the-badge&logo=rockylinux&logoColor=white[Rocky Linux,link=https://rockylinux.org/]
-image:https://img.shields.io/badge/Red%20Hat-EE0000?style=for-the-badge&logo=redhat&logoColor=white[Red Hat Enterprise Linux,link=https://www.redhat.com/]
-image:https://img.shields.io/badge/GNU%20Bash-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white[Bash]
-image:https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white[GitHub Actions]
 
 
 `ELx` is a heavily-modified Enterprise Linux image that is pressed using https://www.packer.io/[Packer]. This repository is responsible for applying identical bootstrapping tasks to multiple releases of Enterprise Linux, e.g. Rocky Linux to automates the creation of a
