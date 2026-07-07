@@ -16,9 +16,9 @@ printf "Installing command: htop\n"
 # htop is packaged in EPEL. Enable EPEL for whatever Enterprise Linux major
 # version and architecture we are running on, rather than pinning an RPM URL.
 EL_VERSION="$(rpm -E %rhel)"
-rpm -q epel-release >/dev/null 2>&1 \
-  || dnf install -y epel-release \
-  || dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${EL_VERSION}.noarch.rpm"
+rpm -q epel-release >/dev/null 2>&1 ||
+  dnf install -y epel-release ||
+  dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${EL_VERSION}.noarch.rpm"
 
 dnf install -y htop
 

@@ -32,14 +32,14 @@ printf "Installing vim plugin: vim-polyglot (v%s)\n" "$VIM_POLYGLOT_RELEASE"
   curl -sSL "$VIM_POLYGLOT_REPO/archive/v$VIM_POLYGLOT_RELEASE.tar.gz" | tar xz --strip=1
 )
 
-cat >> /etc/vimrc <<'EOD'
+cat >>/etc/vimrc <<'EOD'
 set belloff=all
 if &t_Co > 2 || has ("gui_running")
   colorscheme industry
 endif
 EOD
 
-cat >> /etc/profile.d/sh.local <<'EOD'
+cat >>/etc/profile.d/sh.local <<'EOD'
 export EDITOR=vim
 export VISUAL=vim
 EOD

@@ -13,4 +13,4 @@ RUN dnf install -y bc ncurses git \
         'exec bash' > /run.sh \
     && chmod a+x /run.sh
 
-ENTRYPOINT /run.sh
+ENTRYPOINT ["/run.sh"]

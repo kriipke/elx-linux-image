@@ -9,5 +9,5 @@ if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
   yum -y update
 fi
 
-reboot;
-sleep 60;
+reboot
+sleep 60

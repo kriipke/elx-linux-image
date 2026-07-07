@@ -27,13 +27,13 @@ TEST_CMD='fd -V'
 printf "Installing command: fd (%s)\n" "$FD_RELEASE"
 
 (
-        cd /tmp
-        curl -sSL "$FD_REPO/releases/download/v$FD_RELEASE/$FD_ARCHIVE" | tar xz
-        cd fd-v$FD_RELEASE-*
-        install fd /usr/bin/
-        chmod 644 ./autocomplete/_fd
-        chown root.root ./autocomplete/_fd
-        mv ./autocomplete/_fd /usr/share/zsh/site-functions/
+  cd /tmp
+  curl -sSL "$FD_REPO/releases/download/v$FD_RELEASE/$FD_ARCHIVE" | tar xz
+  cd fd-v$FD_RELEASE-*
+  install fd /usr/bin/
+  chmod 644 ./autocomplete/_fd
+  chown root.root ./autocomplete/_fd
+  mv ./autocomplete/_fd /usr/share/zsh/site-functions/
 )
 
 eval $TEST_CMD | grep -q "$FD_RELEASE"

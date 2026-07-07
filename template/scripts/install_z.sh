@@ -19,10 +19,10 @@ Z_TARGET_DIR=/usr/share/z
 
 printf "Installing command: z (%s)\\n" "$Z_RELEASE"
 (
-        cd /tmp
-        mkdir -p $Z_TARGET_DIR
-        curl -Lo $Z_TARGET_DIR/z.sh $Z_REPO_ROOT/z.sh
-        curl -Lo /usr/share/man/man1/z\.1 $Z_REPO_ROOT/z.1
-        echo ". $Z_TARGET_DIR/z.sh" >> /etc/zshrc
+  cd /tmp
+  mkdir -p $Z_TARGET_DIR
+  curl -Lo $Z_TARGET_DIR/z.sh $Z_REPO_ROOT/z.sh
+  curl -Lo /usr/share/man/man1/z\.1 $Z_REPO_ROOT/z.1
+  echo ". $Z_TARGET_DIR/z.sh" >>/etc/zshrc
 )
 echo 'Succesfully installed z!'

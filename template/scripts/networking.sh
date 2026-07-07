@@ -5,10 +5,10 @@
 # generated
 # https://access.redhat.com/site/solutions/58625 (subscription required)
 
-echo 'RES_OPTIONS="single-request-reopen"' >>/etc/sysconfig/network;
+echo 'RES_OPTIONS="single-request-reopen"' >>/etc/sysconfig/network
 
 nmcli networking off
 sleep 5
 nmcli networking on
 
-echo 'Slow DNS fix applied (single-request-reopen)';
+echo 'Slow DNS fix applied (single-request-reopen)'

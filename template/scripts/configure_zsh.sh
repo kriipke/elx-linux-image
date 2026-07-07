@@ -23,11 +23,10 @@ if ! rpm -q util-linux-user >/dev/null; then
   dnf install -yq util-linux-user
 fi
 
-
 mkdir -p $ZSH_CUSTOM_DIR
 git clone https://github.com/sindresorhus/pure.git "$ZSH_CUSTOM_DIR/pure"
 
-cat >> /etc/zshrc <<'EOF'
+cat >>/etc/zshrc <<'EOF'
 unsetopt BEEP
 
 setopt autocd
@@ -95,10 +94,10 @@ autoload -U promptinit; promptinit
 prompt pure
 EOF
 
-command -v chsh &>/dev/null || dnf install -y util-linux-user
+command -v chsh >/dev/null 2>&1 || dnf install -y util-linux-user
 chsh -s /usr/bin/zsh
-echo '# ~/.zshrc' > /root/.zshrc
-echo '# ~/.zshrc' > /etc/skel/.zshrc
+echo '# ~/.zshrc' >/root/.zshrc
+echo '# ~/.zshrc' >/etc/skel/.zshrc
 
 echo "Succesfully installed / configured zsh!"
 echo "Successfully configured zsh!"

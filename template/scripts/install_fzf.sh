@@ -31,8 +31,8 @@ printf "Installing command: fzf (%s)\n" "$FZF_RELEASE"
 
 (
   cd /tmp
-  curl -L "$FZF_REPO/releases/download/$FZF_RELEASE/$FZF_ARCHIVE" | tar xz \
-        && install fzf /usr/bin
+  curl -L "$FZF_REPO/releases/download/$FZF_RELEASE/$FZF_ARCHIVE" | tar xz &&
+    install fzf /usr/bin
 
   eval $TEST_CMD_FZF
 )
@@ -56,7 +56,7 @@ printf "Installing integrations: vim & zsh plugins for fzf (%s)\n" "$FZF_RELEASE
   cp ./shell/completion.zsh $ZSH_SHARED_DIR/_fzf
   cp ./shell/key-bindings.zsh $ZSH_CUSTOM_DIR/fzf.zsh
 
-  cat > /etc/profile.d/fzf.sh <<'EOF'
+  cat >/etc/profile.d/fzf.sh <<'EOF'
   export FZF_TMUX_OPTS="-d 40%"
   export FZF_CTRL_R_OPTS="--margin 15%,5%"
 EOF

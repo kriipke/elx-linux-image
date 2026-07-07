@@ -1,8 +1,8 @@
 #!/bin/sh -eux
 
 # should output one of 'redhat' 'centos' 'oraclelinux'
-distro="`rpm -qf --queryformat '%{NAME}' /etc/redhat-release | cut -f 1 -d '-'`"
-major_version="`sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | awk -F. '{print $1}'`";
+distro="$(rpm -qf --queryformat '%{NAME}' /etc/redhat-release | cut -f 1 -d '-')"
+major_version="$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | awk -F. '{print $1}')"
 
 echo "Remove development and kernel source packages"
 dnf -y remove gcc cpp gc kernel-devel kernel-headers glibc-devel elfutils-libelf-devel glibc-headers kernel-devel kernel-headers
@@ -19,20 +19,20 @@ dnf -y remove linux-firmware
 
 if [ "$distro" != 'redhat' ]; then
   echo "clean all package cache information"
-  $pkg_cmd -y clean all  --enablerepo=\*;
+  $pkg_cmd -y clean all --enablerepo=\*
 fi
 
 # Clean up network interface persistence
-rm -f /etc/udev/rules.d/70-persistent-net.rules;
-mkdir -p /etc/udev/rules.d/70-persistent-net.rules;
-rm -f /lib/udev/rules.d/75-persistent-net-generator.rules;
-rm -rf /dev/.udev/;
+rm -f /etc/udev/rules.d/70-persistent-net.rules
+mkdir -p /etc/udev/rules.d/70-persistent-net.rules
+rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
+rm -rf /dev/.udev/
 
-for ndev in `ls -1 /etc/sysconfig/network-scripts/ifcfg-*`; do
-    if [ "`basename $ndev`" != "ifcfg-lo" ]; then
-        sed -i '/^HWADDR/d' "$ndev";
-        sed -i '/^UUID/d' "$ndev";
-    fi
+for ndev in $(ls -1 /etc/sysconfig/network-scripts/ifcfg-*); do
+  if [ "$(basename $ndev)" != "ifcfg-lo" ]; then
+    sed -i '/^HWADDR/d' "$ndev"
+    sed -i '/^UUID/d' "$ndev"
+  fi
 done
 
 echo "remove host keys so they are uniquely generated on first boot"

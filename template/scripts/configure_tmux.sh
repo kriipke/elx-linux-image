@@ -27,7 +27,7 @@ echo 'Configuring tmux.'
 
 echo 'Enabling tmux auto-attach.'
 for file in /root/.zprofile /etc/skel/.zprofile; do
-cat >> "$file" <<'EOF'
+  cat >>"$file" <<'EOF'
 ## BEGIN TMUX AUTO-ATTACH FUNCTIONALITY 
 #
 # The lines below cause a tmux session to automatically attach upon login.
@@ -61,7 +61,7 @@ done
 echo 'Configuring zsh to exit in a way that leaves tmux session intact.'
 
 for file in /root/.zshrc /etc/skel/.zshrc; do
-cat >> "$file" <<'EOF'
+  cat >>"$file" <<'EOF'
 ## BEGIN TMUX AUTO-ATTACH FUNCTIONALITY 
 #
 # The lines below cause a tmux session to detach before a user logs off,
@@ -108,7 +108,7 @@ fi
 EOF
 done
 
-cat > /etc/tmux.conf <<'EOF'
+cat >/etc/tmux.conf <<'EOF'
 set -g status off
 set -g pane-active-border-fg 'cyan'
 set -g status-bg 'cyan'

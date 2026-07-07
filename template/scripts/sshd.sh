@@ -11,27 +11,27 @@ PS4='$(tput setaf 4)$(printf "%-12s\\t%.3fs\\t@line\\t%-10s" $(date +%T) $(echo 
 SSHD_CONFIG="/etc/ssh/sshd_config"
 
 if [ -f $SSHD_CONFIG ]; then
-# ensure that there is a trailing newline before attempting to concatenate
-sed -i -e '$a\' "$SSHD_CONFIG"
+  # ensure that there is a trailing newline before attempting to concatenate
+  sed -i -e '$a\' "$SSHD_CONFIG"
 
-USEDNS="UseDNS no"
-if grep -q -E "^[[:space:]]*UseDNS" "$SSHD_CONFIG"; then
+  USEDNS="UseDNS no"
+  if grep -q -E "^[[:space:]]*UseDNS" "$SSHD_CONFIG"; then
     sed -i "s/^\s*UseDNS.*/${USEDNS}/" "$SSHD_CONFIG"
-else
+  else
     echo "$USEDNS" >>"$SSHD_CONFIG"
-fi
+  fi
 
-PWAUTH="PasswordAuthentication no"
-if grep -q -E "^[[:space:]]*PasswordAuthentication" "$SSHD_CONFIG"; then
+  PWAUTH="PasswordAuthentication no"
+  if grep -q -E "^[[:space:]]*PasswordAuthentication" "$SSHD_CONFIG"; then
     sed -i "s/^\s*PasswordAuthentication.*/${PWAUTH}/" "$SSHD_CONFIG"
-else
+  else
     echo "$PWAUTH" >>"$SSHD_CONFIG"
-fi
+  fi
 
-GSSAPI="GSSAPIAuthentication no"
-if grep -q -E "^[[:space:]]*GSSAPIAuthentication" "$SSHD_CONFIG"; then
+  GSSAPI="GSSAPIAuthentication no"
+  if grep -q -E "^[[:space:]]*GSSAPIAuthentication" "$SSHD_CONFIG"; then
     sed -i "s/^\s*GSSAPIAuthentication.*/${GSSAPI}/" "$SSHD_CONFIG"
-else
+  else
     echo "$GSSAPI" >>"$SSHD_CONFIG"
-fi
+  fi
 fi
