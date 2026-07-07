@@ -4,6 +4,7 @@
 :toc-title:
 
 // Badges via https://github.com/Ileriayo/markdown-badges and https://shields.io/
+image:https://img.shields.io/github/actions/workflow/status/kriipke/elx-linux-image/ci.yml?branch=main&style=for-the-badge[CI,link=https://github.com/kriipke/elx-linux-image/actions/workflows/ci.yml]
 image:https://img.shields.io/badge/Packer-02A8EF?style=for-the-badge&logo=packer&logoColor=white[Packer,link=https://www.packer.io/]
 image:https://img.shields.io/badge/Rocky%20Linux-10B981?style=for-the-badge&logo=rockylinux&logoColor=white[Rocky Linux,link=https://rockylinux.org/]
 image:https://img.shields.io/badge/Red%20Hat-EE0000?style=for-the-badge&logo=redhat&logoColor=white[Red Hat Enterprise Linux,link=https://www.redhat.com/]
