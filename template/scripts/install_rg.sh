@@ -13,11 +13,13 @@ PS4='$(tput setaf 4)$(printf "%-12s\\t%.3fs\\t@line\\t%-10s" $(date +%T) $(echo 
 
 printf "Installing command: rg\n"
 
-if [ $(uname -m) = "aarch64" ]; then
-dnf install -y https://dl.fedoraproject.org/pub/epel/9/Everything/aarch64/Packages/r/ripgrep-13.0.0-6.el9.aarch64.rpm
-elif [ $(uname -m) = "x86_64" ]; then
-dnf install -y https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/Packages/r/ripgrep-13.0.0-6.el9.x86_64.rpm
-else
-echo "Architecture not supported!"
-exit 1
-fi
+# ripgrep is packaged in EPEL. Enable EPEL for whatever Enterprise Linux major
+# version and architecture we are running on, rather than pinning an RPM URL.
+EL_VERSION="$(rpm -E %rhel)"
+rpm -q epel-release >/dev/null 2>&1 \
+  || dnf install -y epel-release \
+  || dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${EL_VERSION}.noarch.rpm"
+
+dnf install -y ripgrep
+
+rg --version

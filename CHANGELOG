@@ -13,3 +13,13 @@
 # changes: v0.3-rc5
 - entire project has ben rewritten in HCL, still working out the kinks
 
+# changes: v0.4
+- added Rocky Linux 10 support (http/el10/ks.cfg, rocky10.pkrvars.hcl)
+- build now defaults to the current Rocky Linux 10 release
+- template parameterized via variables.pkr.hcl (iso, version, arch, credentials)
+- iso_checksum tracks Rocky's published CHECKSUM file (works across point releases)
+- kickstart now creates the 'ansible' build user with passwordless sudo;
+  provisioners run via sudo
+- htop added to the standard tool set
+- rg and htop now install from EPEL so they work on both EL9 and EL10
+

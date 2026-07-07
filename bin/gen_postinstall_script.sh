@@ -22,6 +22,7 @@ sed -e '/^\(#!\)/{x;/./!{x;h;b;};d}' << cat \
 ../template/scripts/install_fd.sh \
 ../template/scripts/install_lnav.sh \
 ../template/scripts/install_rg.sh \
+../template/scripts/install_htop.sh \
 ../template/scripts/install_z.sh \
 ../template/scripts/cleanup.sh \
 ../template/scripts/minimize.sh

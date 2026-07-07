@@ -10,38 +10,67 @@ packer {
 locals {
   build_directory = "${path.root}/../builds"
   http_directory  = "${path.root}/http"
-  name            = "elx91_aarch64"
+  name            = "${var.os_name}${var.os_version}_${var.arch}"
 }
 
-source "parallels-iso" "elx91_aarch64" {
+source "parallels-iso" "elx" {
   boot_command = [
     "<up>",
     "e",
     "<down><down><end><wait>",
-    "inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/el9/ks.cfg",
+    "inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.kickstart}",
     "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
   ]
   boot_wait              = "5s"
-  http_directory         = "http"
+  http_directory         = local.http_directory
   guest_os_type          = "rhel"
-  iso_checksum           = "dc35c068bd3906f7f82faecdb1ddf3f10d91c11fde6bb92f8778558264503897"
-  iso_url                = "file:/Volumes/iso/el-9.1-beta/rhel-baseos-9.1-beta-1-aarch64-dvd.iso"
-  parallels_tools_flavor = "lin-arm"
-  shutdown_command       = "echo 'ansible' | sudo -S shutdown -P now"
-  ssh_password           = "ansible"
+  iso_url                = var.iso_url
+  iso_checksum           = var.iso_checksum
+  parallels_tools_flavor = var.parallels_tools_flavor
+  output_directory       = "${local.build_directory}/${local.name}"
+  vm_name                = local.name
+  shutdown_command       = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
+  ssh_password           = var.ssh_password
+  ssh_username           = var.ssh_username
   ssh_timeout            = "900s"
-  ssh_username           = "ansible"
 }
 
 build {
-  sources = ["source.parallels-iso.elx91_aarch64"]
+  sources = ["source.parallels-iso.elx"]
 
   provisioner "shell" {
-    environment_vars  = ["HOME_DIR=/root", "IMAGE_NAME='${local.name}'", "BUILD_ID='${local.name}'", "DOCUMENTATION_URL='https://github.com/xtalcloud/system-image'"]
-    execute_command   = "sh -euxc '{{ .Vars }} {{ .Path }}'"
+    environment_vars = [
+      "HOME_DIR=/root",
+      "IMAGE_NAME='${local.name}'",
+      "BUILD_ID='${local.name}'",
+      "DOCUMENTATION_URL='${var.documentation_url}'",
+    ]
+    # Packer connects as an unprivileged build user; run each script as root.
+    # {{ .Vars }} sets the environment_vars inline so they reach the script.
+    execute_command   = "sudo sh -euxc '{{ .Vars }} {{ .Path }}'"
     expect_disconnect = true
-    remote_folder     = "/root"
-    scripts           = ["${path.root}/scripts/motd.sh", "${path.root}/scripts/issue.sh", "${path.root}/scripts/metadata.sh", "${path.root}/scripts/sshd.sh", "${path.root}/scripts/networking.sh", "${path.root}/scripts/configure_vim.sh", "${path.root}/scripts/install_fzf.sh", "${path.root}/scripts/install_nnn.sh", "${path.root}/scripts/configure_zsh.sh", "${path.root}/scripts/configure_tmux.sh", "${path.root}/scripts/install_bat.sh", "${path.root}/scripts/install_croc.sh", "${path.root}/scripts/install_fd.sh", "${path.root}/scripts/install_lnav.sh", "${path.root}/scripts/install_rg.sh", "${path.root}/scripts/install_z.sh", "${path.root}/scripts/cleanup.sh", "${path.root}/scripts/minimize.sh"]
+    remote_folder     = "/tmp"
+    scripts = [
+      "${path.root}/scripts/motd.sh",
+      "${path.root}/scripts/issue.sh",
+      "${path.root}/scripts/metadata.sh",
+      "${path.root}/scripts/networking.sh",
+      "${path.root}/scripts/sshd.sh",
+      "${path.root}/scripts/configure_vim.sh",
+      "${path.root}/scripts/install_fzf.sh",
+      "${path.root}/scripts/install_nnn.sh",
+      "${path.root}/scripts/configure_zsh.sh",
+      "${path.root}/scripts/configure_tmux.sh",
+      "${path.root}/scripts/install_bat.sh",
+      "${path.root}/scripts/install_croc.sh",
+      "${path.root}/scripts/install_fd.sh",
+      "${path.root}/scripts/install_lnav.sh",
+      "${path.root}/scripts/install_rg.sh",
+      "${path.root}/scripts/install_htop.sh",
+      "${path.root}/scripts/install_z.sh",
+      "${path.root}/scripts/cleanup.sh",
+      "${path.root}/scripts/minimize.sh",
+    ]
   }
 
 }
