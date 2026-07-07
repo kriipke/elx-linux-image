@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        env:
+          # Scripts are sourced/concatenated by the postinstall generator,
+          # so allow external-source resolution and non-fatal info diagnostics.
+          SHELLCHECK_OPTS: -x -e SC1091
+        with:
+          scandir: .
+          format: gcc
+          severity: warning
+
+  shfmt:
+    name: shfmt (formatting)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell formatting
+        uses: docker://mvdan/shfmt:latest
+        with:
+          # -d: show a diff and fail if any file is not formatted.
+          # -i 2: two-space indent to match existing scripts.
+          args: -d -i 2 .
+
+  packer:
+    name: Packer fmt & validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-packer@main
+        with:
+          version: latest
+      - name: Check formatting
+        run: packer fmt -check -recursive template
+
+  hadolint:
+    name: Hadolint (Dockerfile)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
