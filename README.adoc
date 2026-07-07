@@ -92,7 +92,7 @@ target Enterprise Linux release, so they work on both EL9 and EL10.
 * The last two scripts, `cleanup.sh` and `minimize.sh`, strip development packages and zero out free space
   so the exported disk compresses well.
 
-== Repository layout
+=== Repository layout
 
 [source]
 ----
@@ -122,7 +122,10 @@ target Enterprise Linux release, so they work on both EL9 and EL10.
 └── README.adoc
 ----
 
-== Requirements
+
+=== Building the Images
+
+==== Requirements
 
 * *Packer* — a recent release, in your `PATH`. Download: https://www.packer.io/downloads
 * The *Parallels Packer plugin* (`github.com/hashicorp/parallels`, ≥ 1.0.3). `packer init` will fetch it.
@@ -131,7 +134,7 @@ target Enterprise Linux release, so they work on both EL9 and EL10.
   current *Rocky Linux 10* DVD straight from the Rocky mirror (see "Pointing at your ISO" to use a local
   or different image).
 
-== Building
+==== Running Packer
 
 [source,console]
 ----
@@ -152,7 +155,7 @@ packer build -var-file=rocky9.pkrvars.hcl .      # Rocky Linux 9
 `variables.pkr.hcl` already target Rocky 10. The finished image is written to
 `builds/<os><version>_<arch>/` (e.g. `builds/rocky10_aarch64/`).
 
-=== Pointing at your ISO
+==== Pointing at your ISO
 
 The ISO is chosen by two variables, set in the var-files (or overridable with `-var`):
 
@@ -176,7 +179,7 @@ packer build -var 'os_version=10' -var 'iso_url=file:/Volumes/iso/my.iso' \
              -var 'iso_checksum=sha256:<hash>' -var 'kickstart=el10/ks.cfg' .
 ----
 
-=== Building for x86_64 or another hypervisor
+==== Building for x86_64 or another hypervisor
 
 The template is configured for aarch64 + Parallels, but the tooling is largely architecture-aware:
 
@@ -199,7 +202,8 @@ appliance. Review and change these before using it anywhere untrusted.
 * SELinux ships in `permissive` mode and the firewall is disabled; tighten these in the Kickstart file if
   your environment requires it.
 
-== Iterating on the provisioner scripts (Docker)
+== Contributing 
+=== Iterating on the provisioner scripts (Docker)
 
 A full VM build is slow to iterate on. To test/develop the install and configuration scripts quickly,
 use the provided container, which drops you into a shell in the scripts directory on a fresh Rocky Linux 9:
@@ -213,7 +217,7 @@ docker run --rm -it elx-scripts   # clones the repo and lands you in template/sc
 From there you can run scripts individually. `template/scripts/_test.sh` documents a convenient run order
 for manual testing.
 
-== Generating a single post-install script
+=== Generating a single post-install script
 
 If you want to apply the same provisioning outside of Packer (for example, against an existing host or a
 cloud-init `runcmd`), `bin/gen_postinstall_script.sh` concatenates all the provisioner scripts — in build
@@ -225,7 +229,7 @@ cd bin
 ./gen_postinstall_script.sh > /tmp/postinstall.sh
 ----
 
-== Customizing
+=== Customizing
 
 * *Add a tool* — drop a new `install_yourtool.sh` in `template/scripts/`, then add it to the `scripts`
   list in the `provisioner "shell"` block of `template/template.pkr.hcl` (and, if you use them, to
